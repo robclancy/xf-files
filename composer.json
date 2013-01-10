@@ -1,0 +1,22 @@
+{
+    "name": "bigelephant/xf-files",
+    "keywords": ["xenforo"],
+    "authors": [
+        {
+            "name": "Robbo",
+            "email": "robert@mercenarydesign.net"
+        }
+    ],
+    "require": {
+        "bigelephant/xf-console": "*"
+    },
+    "require-dev": {
+        "mockery/mockery": "0.7.2"
+    },
+    "autoload": {
+        "psr-0": {
+            "BigElephant\\XfFiles": "src/"
+        }
+    },
+    "minimum-stability": "dev"
+}
