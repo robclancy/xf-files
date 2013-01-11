@@ -8,7 +8,8 @@
         }
     ],
     "require": {
-        "bigelephant/xf-console": "*"
+        "bigelephant/xf-console": "*",
+        "bigelephant/xf-tools": "*"
     },
     "require-dev": {
         "mockery/mockery": "0.7.2"
