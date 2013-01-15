@@ -9,7 +9,8 @@
     ],
     "require": {
         "bigelephant/xf-console": "*",
-        "bigelephant/xf-tools": "*"
+        "bigelephant/xf-tools": "*",
+        "illuminate/filesystem": "4.0.x"
     },
     "require-dev": {
         "mockery/mockery": "0.7.2"

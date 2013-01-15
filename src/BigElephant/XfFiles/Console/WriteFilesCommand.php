@@ -1,43 +1,63 @@
 <?php namespace BigElephant\XfFiles\Console;
 
-use BigElephant\XfConsole\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 
+use Illuminate\Filesystem\Filesystem;
 use BigElephant\XfFiles\XenForo\Template;
 
-class WriteFilesCommand extends Command {
+class WriteFilesCommand extends BaseCommand {
 
 	protected $name = 'files:write';
 
 	protected $description = 'Write Xenforo templates and phrases to the file system';
 
-	protected $templateModel;
-
 	public function fire()
 	{
-		$this->templateModel = new Template;
+		$this->writeFiles(-1);
+		$this->writeFiles(0);
+	}
 
-		$this->info('Writing admin templates...');
+	protected function writeFiles($styleId)
+	{
+		$type = 'style:'.$styleId;
+		if ($styleId == -1)
+		{
+			$type = 'admin';
+		}
+		else if ($styleId == 0)
+		{
+			$type = 'master';
+		}
 
-		$templates = $this->templateModel->getTemplates(-1);
+		$this->info("Writing $type templates");
+
+		$templates = $this->templateModel->getTemplates($styleId);
+
+		$path = $this->templateModel->getRootTemplatePath();
+		if ( ! $this->fileSystem->exists($path))
+		{
+			$this->fileSystem->makeDirectory($path, 0777, true);
+		}
 
 		$progress = $this->getHelperSet()->get('progress');
 		$progress->start($this->output, count($templates));
-		$verbose = $this->output->getVerbosity();
 		foreach ($templates AS $template)
 		{
-			if ($verbose > 1)
-			{
-				$this->output->write("  - Writing <info>$template[addon_id] $template[title]</info>...");
-			}
+			$this->write("  - Writing <info>$template[addon_id] $template[title]</info>...", 2);
 			
-			// write here
-			usleep(30000);
-
-			if ($verbose > 1)
+			$path = $this->templateModel->getTemplatePath($template);
+			if ( ! $this->fileSystem->exists(dirname($path)))
 			{
-				$this->output->writeln(" done (<comment>full/long/path/name/here/$template[title].html</comment>)");
+				$this->fileSystem->makeDirectory(dirname($path), 0777, true);
+			}
+
+			$this->fileSystem->put($path, $template['template']);
+			$this->templateModel->updateModified($template, $this->fileSystem->lastModified($path));
+
+			if ($this->getVerbosity() > 1)
+			{
+				$this->line(' done (<comment>'. $this->templateModel->displayPath($path) .'</comment>)');
 			}
 			else
 			{
