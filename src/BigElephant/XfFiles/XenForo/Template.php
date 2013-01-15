@@ -44,13 +44,13 @@ class Template extends Model {
 
 	public function getRootTemplatePath()
 	{
-		return realpath(XenForo_Application::getInstance()->getRootDir()) . '/templates/';
+		return XenForo_Application::getInstance()->getRootDir() . '/templates/';
 	}
 
 	public function displayPath($path)
 	{
 		// Just remove the root path
-		$root = realpath(XenForo_Application::getInstance()->getRootDir());
+		$root = XenForo_Application::getInstance()->getRootDir();
 		if (strpos($path, $root) === 0)
 		{
 			$path = substr($path, strlen($root));
@@ -167,7 +167,7 @@ class Template extends Model {
 		{
 			case 'admin': $styleId = -1; break;
 			case 'master': $styleId = 0; break;
-			default: list ($meh, $styleId) = explode(':', $folder[2]);
+			default: list ($meh, $styleId) = explode('_', $folders[2]);
 		}
 
 		return array(
